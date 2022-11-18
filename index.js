@@ -101,6 +101,7 @@ async function run() {
         });
 
         app.post('/reviews', async (req, res) => {
+            console.log(req.body);
             const review = req.body;
 
             const result = await reviewCollection.insertOne(review);
@@ -108,8 +109,21 @@ async function run() {
         });
 
         // review update
-        app.put('/reviews', async (req, res) => {
-            const id = req.body.reviewId;
+
+        app.get('/reviews/edit/:id', async (req, res) => {
+            // console.log(req.params.id);
+
+            const id = req.params.id;
+            const query = {
+                _id: ObjectId(id)
+            };
+
+            const review = await reviewCollection.findOne(query);
+            res.send(review);
+        });
+
+        app.put('/reviews/edit/:id', async (req, res) => {
+            const id = req.params.id;
 
             const query = {
                 _id: ObjectId(id)
@@ -120,7 +134,7 @@ async function run() {
                     message: req.body.message
                 }
             };
-
+            console.log(id, updatedDoc);
             const result = await reviewCollection.updateOne(query, updatedDoc);
             res.send(result);
         });
